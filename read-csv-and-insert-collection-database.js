@@ -1,39 +1,25 @@
 /**
- * Scrip para inserir dados de um CSV no mongoDB.
+ * Script to insert a CSV file on MongoDB.
  */
-// -------
 
-// Path e nome do arquivo de entrada.
-var file = "./list_libraries_and_javadoc.csv";
+var file = "./input/repository_dependencies-1.2.0-2018-03-12.csv";
+var nameDatabase = 'librariesio';
+var nameCollection = "repository_dependencies";
+var separador = ","; 
 
-// Dados para conexão com o MongoDB
-var dbUrl = 'mongodb://127.0.0.1:27017/APIs-BreakingChange-pesquisa-piloto-2';
-var db = null;
-
-//Dados da coleção onde os dados serão inseridos.
-var nameCollection = "bibliotecas_com_javadoc";
 var collection = null;
-
-//Bibliotecas para acessar banco de dados e ler o arquivo de entrada.
+var db = null;
+var dbUrl = 'mongodb://127.0.0.1:27017/' + nameDatabase;
 var lineReader = require('line-reader');
 var MongoClient = require('mongodb').MongoClient;
 
-//Número de colunas no CSV.
-var numberCols = 33;
 
-//Separador dos dados no CSV.
-var separador = ";"; 
-
-//Insere os dados na coleção.
 var insertRegistry = function(registry, last){
 	collection.insert([registry], function (err, result) {
 		if (err) {
 			console.log("ERROR: " + err);
 		} 
-		//else {
-			//console.log(registry.category);
-		//}
-		if(last){ // Se último registro, encerra a conexão.  	
+		if(last){ 
 			console.log("\nSuccessfully insert data! \n");
 			//db.close();
 		}
@@ -42,30 +28,23 @@ var insertRegistry = function(registry, last){
 
 var parserFile = function(){
 
-	var i = 0;
-	//last == true se fim do arquivo.
+	//last == end file
 	lineReader.eachLine(file, function(line, last) {
 	    
-		//Quebra a linha pelo separador
 		var data = line.split(separador);
+		var registry = new Object();
 
-		if(data.length >= 4){
+		// registry.ID =  data[0];
 
-			var registry = new Object();
-
-			registry.idGitHub = data[1];
-
-			//TODO: adicionar propriedades conforme a necessidade.
-
+		if(registry.ManifestPlatform == "maven"){
+			console.log(registry);
 			insertRegistry(registry,last);
+
 		}
-		else{
-			console.log("ERROR: Data invalid! " + i + ": [" + line + "]");
-		}
-		i++;
+
+		
 	});
 }
-
 
 var initParser = function(){
 	console.log("\nStarted process...");
