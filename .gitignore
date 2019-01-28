@@ -1,5 +1,6 @@
 #local files
 inputs/
+input/
 
 # Logs
 logs
